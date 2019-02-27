@@ -10,5 +10,5 @@ logger = pino({"bindings": {"apptype": "prototype"}})
 
 logger.info("toto")
 logger.debug("tutu")
-logger.warn("tata")
+logger.warn({"err_code": 42}, "tata")
 logger.error("tete")
