@@ -8,4 +8,7 @@ from pino import pino
 
 logger = pino('prefix')
 
-logger("TOTO")
+logger.info("toto")
+logger.debug("tutu")
+logger.warn("tata")
+logger.error("tete")

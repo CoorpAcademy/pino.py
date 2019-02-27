@@ -1,1 +1,1 @@
-from .core import Pino as pino
+from .core import PinoLogger as pino
