@@ -6,7 +6,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pino import pino
 
-logger = pino()
+logger = pino({"bindings": {"apptype": "prototype"}})
 
 logger.info("toto")
 logger.debug("tutu")
