@@ -9,18 +9,16 @@ LEVELS = {
 
 class PinoLogger:
 
-    def __init__(self, options = None):
-        self.options = options or {}
-        self._logger_level = LEVELS[self.options.get("level", "info")]
-        self._logger_metas = self.options.get("bindings", {})
+    def __init__(self, bindings=None, level="info"):
+        self._logger_level = LEVELS[level]
+        self._logger_metas = bindings or {}
         self._is_logging = True
 
     def _log(self, metas, message, level = "info"):
-        real_message = message or metas
-        message_metas = metas if message else {}
-
         # for simple of api, expect a single message
         if self._is_logging and LEVELS[level] >= self._logger_level:
+            real_message = message or metas
+            message_metas = metas if message else {}
             print(json.dumps({"message": real_message, "level": level, **self._logger_metas, **message_metas}))
 
     def info(self, metas, message=None):
