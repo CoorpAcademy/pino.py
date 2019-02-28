@@ -1,6 +1,7 @@
 import json
 import sys
 import os
+from datetime import datetime
 
 LEVELS = {
     "fatal": 50,
@@ -24,7 +25,12 @@ class PinoLogger:
         if self._is_logging and LEVELS[level] >= self._logger_level:
             real_message = message or metas
             message_metas = metas if message else {}
-            self._stream.write(json.dumps({"message": real_message, "level": level, **self._logger_metas, **message_metas}))
+            self._stream.write(json.dumps({
+                 "level": level,
+                 "time": int(1000* datetime.now().timestamp()),
+                 "message": real_message,
+                 **self._logger_metas,
+                 **message_metas}))
             self._stream.write(os.linesep)
 
     def fatal(self, metas, message=None):
