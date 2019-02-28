@@ -12,3 +12,6 @@ logger.info("toto")
 logger.debug("tutu")
 logger.warn({"err_code": 42}, "tata")
 logger.error("tete")
+
+child_logger = logger.child({"apptype": "mega-prototype"})
+child_logger.info("little logger")

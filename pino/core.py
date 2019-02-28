@@ -13,6 +13,7 @@ LEVELS = {
 class PinoLogger:
 
     def __init__(self, bindings=None, level="info", stream=sys.stdout, disabled=False):
+        self._level = level
         self._logger_level = LEVELS[level]
         self._logger_metas = bindings or {}
         self._is_logging = not disabled
@@ -36,3 +37,13 @@ class PinoLogger:
         self._log(metas, message, level="warn")
     def debug(self, metas, message=None):
         self._log(metas, message, level="debug")
+
+    def child(self, metas):
+        # §TODO: handle level?
+        merged_bindings = {**self._logger_metas, **metas}
+        return PinoLogger(
+            bindings=merged_bindings,
+            level=self._level,
+            disabled=not self._is_logging,
+            stream=self._stream
+        )
