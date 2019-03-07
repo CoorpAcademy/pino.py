@@ -13,11 +13,11 @@ LEVELS = {
 
 class PinoLogger:
 
-    def __init__(self, bindings=None, level="info", stream=sys.stdout, disabled=False):
+    def __init__(self, bindings=None, level="info", stream=sys.stdout, enabled=True):
         self._level = level
         self._logger_level = LEVELS[level]
         self._logger_metas = bindings or {}
-        self._is_logging = not disabled
+        self._is_logging = enabled
         self._stream = stream
 
     def _log(self, metas, message, level = "info"):
@@ -28,6 +28,7 @@ class PinoLogger:
             self._stream.write(json.dumps({
                  "level": level,
                  "time": int(1000* datetime.now().timestamp()),
+                 # §todo: add host and other metas.
                  "message": real_message,
                  **self._logger_metas,
                  **message_metas}))
@@ -50,6 +51,6 @@ class PinoLogger:
         return PinoLogger(
             bindings=merged_bindings,
             level=self._level,
-            disabled=not self._is_logging,
+            enabled=self._is_logging,
             stream=self._stream
         )
