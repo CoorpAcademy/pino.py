@@ -2,6 +2,7 @@ import json
 import sys
 import os
 from datetime import datetime
+from .utils import merge_dicts
 
 LEVELS = {
     "fatal": 50,
@@ -30,8 +31,7 @@ class PinoLogger:
                  "time": int(1000* datetime.now().timestamp()),
                  # §todo: add host and other metas.
                  "message": real_message,
-                 **self._logger_metas,
-                 **message_metas}))
+                 **merge_dicts(self._logger_metas, message_metas)}))
             self._stream.write(os.linesep)
 
     def fatal(self, metas, message=None):
@@ -47,7 +47,7 @@ class PinoLogger:
 
     def child(self, metas):
         # §TODO: handle level?
-        merged_bindings = {**self._logger_metas, **metas}
+        merged_bindings = merge_dicts({self._logger_metas, metas})
         return PinoLogger(
             bindings=merged_bindings,
             level=self._level,
