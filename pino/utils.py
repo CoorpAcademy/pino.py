@@ -1,6 +1,6 @@
 
 def merge_dicts(dict_a, dict_b, path=None):
-    "Return dict issue from merge from dict_a and dict_b"
+    "Return dict issue from merge from dict_a and dict_b, dict_a aving precedence"
     # inspired from https://stackoverflow.com/questions/7204805/dictionaries-of-dictionaries-merge/7205107#7205107
     if path is None: path = []
     merged_dict = dict(dict_a)
@@ -10,8 +10,6 @@ def merge_dicts(dict_a, dict_b, path=None):
                 merged_dict[key] = merge_dicts(dict_a[key], dict_b[key], path + [str(key)])
             elif dict_a[key] == dict_b[key]:
                 pass # same leaf value
-            else:
-                raise Exception('Conflict at %s' % '.'.join(path + [str(key)]))
         else:
             merged_dict[key] = dict_b[key]
     return merged_dict
