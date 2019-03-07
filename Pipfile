@@ -4,6 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pytest-cov = "*"
+codecov = "*"
+pytest = "*"
 
 [dev-packages]
 twine = "*"
@@ -17,4 +20,4 @@ python_version = "3.6"
 
 [scripts]
 test = "tox"
-pytest = "python -m pytest"
+pytest = "python -m pytest --cov=pino"

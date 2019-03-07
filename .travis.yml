@@ -10,3 +10,6 @@ install:
 
 script:
   - pipenv run test
+
+after_success:
+  - pipenv run codecov

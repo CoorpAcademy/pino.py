@@ -6,6 +6,7 @@ pino.py
 [![PyPI](https://img.shields.io/pypi/v/pino.svg)](https://pypi.org/project/pino/)
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/pino.svg)](https://pypi.python.org/pypi/pino)
 [![Build Status](https://travis-ci.com/CoorpAcademy/pino.py.svg?branch=master)](https://travis-ci.com/CoorpAcademy/pino.py)
+[![codecov](https://codecov.io/gh/CoorpAcademy/pino.py/branch/master/graph/badge.svg)](https://codecov.io/gh/CoorpAcademy/pino.py)
 
 > In building port of [pinojs](https://github.com/pinojs/pino) logging library to python :snake:
 
