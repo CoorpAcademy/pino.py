@@ -12,3 +12,11 @@ pino.py
 :warning: This is a in building prototype, it's API is subject to change.
 A CHANGELOG will be introduced once it's stable enough and publicized.
 Use it at you own risk, but feel free to reach with an issue.
+
+
+## Development :hammer_and_wrench:
+
+This library use [***Pipenv***](https://pipenv.readthedocs.io) for dependencies management.
+
+You can run test on all supported python version with `pipenv run test` (which will run `tox`),
+or you can run on your current python version with `pipenv run pytest`.

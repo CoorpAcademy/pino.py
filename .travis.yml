@@ -9,4 +9,4 @@ install:
   - pipenv install --dev
 
 script:
-  - pipenv run tox
+  - pipenv run test
