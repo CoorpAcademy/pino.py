@@ -47,7 +47,7 @@ class PinoLogger:
 
     def child(self, metas):
         # §TODO: handle level?
-        merged_bindings = merge_dicts({self._logger_metas, metas})
+        merged_bindings = merge_dicts(self._logger_metas, metas)
         return PinoLogger(
             bindings=merged_bindings,
             level=self._level,
