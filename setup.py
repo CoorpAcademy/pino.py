@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name="pino",
-    version="0.3.1",
+    version="0.3.2",
     author="Adrien Becchis @Coorpacademy",
     author_email="adriean.khisbe@live.fr",
     description="Python json logger",
