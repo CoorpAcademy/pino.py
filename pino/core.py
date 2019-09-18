@@ -33,6 +33,7 @@ class PinoLogger:
                  "message": real_message,
                  **merge_dicts(self._logger_metas, message_metas)}))
             self._stream.write(os.linesep)
+            self._stream.flush()
 
     def fatal(self, metas, message=None):
         self._log(metas, message, level="fatal")
