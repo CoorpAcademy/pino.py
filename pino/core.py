@@ -14,21 +14,21 @@ LEVELS_NAME_TO_LEVEL = {
 LEVEL_NAMES = LEVELS_NAME_TO_LEVEL.keys()
 
 
-def get_logger(self, level):
+def get_logger(stream, level, metas={}):
     def log(*args):
         has_meta = isinstance(args[0], dict)
         message_metas = args[0] if has_meta else None
-        metas = (merge_dicts(self._logger_metas, message_metas)
-                 if message_metas else self._logger_metas)
+        complete_metas = (merge_dicts(metas, message_metas)
+                 if message_metas else metas)
         message = args[1] if has_meta else args[0]
-        self._stream.write(json.dumps({
+        stream.write(json.dumps({
                 "level": level,
                 "time": int(1000* datetime.now().timestamp()),
                 # §todo: add host and other metas.
                 "message": message,
-                **metas}))
-        self._stream.write(os.linesep)
-        self._stream.flush()
+                **complete_metas}))
+        stream.write(os.linesep)
+        stream.flush()
     log.__name__ = level
     return log
 
@@ -43,7 +43,7 @@ class PinoLogger:
         self._is_logging = enabled
         self._stream = stream
         for level in LEVEL_NAMES:
-            logging_method = (get_logger(self, level)
+            logging_method = (get_logger(self._stream, level, self._logger_metas)
               if enabled and LEVELS_NAME_TO_LEVEL[level] >= self._logger_level
               else noop)
             setattr(self, level, logging_method)
