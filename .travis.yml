@@ -10,6 +10,9 @@ install:
 
 script:
   - pipenv run test
+  # just check example dont crash waiting for real tests
+  - pipenv run python examples/simple.py
+  - pipenv run python examples/complex.py
 
 after_success:
   - pipenv run codecov
