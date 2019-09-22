@@ -2,7 +2,10 @@ import json
 import sys
 import os
 from datetime import datetime
+from collections import namedtuple
 from .utils import merge_dicts
+
+PinoConfig = namedtuple('PinoConfig', ['level', 'level_name', 'stream', 'binding', 'enabled', 'parent'])
 
 LEVELS_NAME_TO_LEVEL = {
     "debug": 10,
@@ -36,24 +39,22 @@ def noop(*args):
     pass
 
 class PinoLogger:
-    def __init__(self, bindings=None, level="info", stream=sys.stdout, enabled=True):
-        self._level = level
-        self._logger_level = LEVELS_NAME_TO_LEVEL[level]
-        self._logger_metas = bindings or {}
-        self._is_logging = enabled
-        self._stream = stream
-        for level in LEVEL_NAMES:
-            logging_method = (get_logger(self._stream, level, self._logger_metas)
-              if enabled and LEVELS_NAME_TO_LEVEL[level] >= self._logger_level
+    def __init__(self, bindings=None, level="info", stream=sys.stdout, enabled=True, parent=None):
+        logger_logging_level = LEVELS_NAME_TO_LEVEL[level]
+        self._config = PinoConfig(level, logger_logging_level, stream, bindings, enabled, parent)
+        for logging_level in LEVEL_NAMES:
+            logging_method = (get_logger(stream, logging_level, bindings)
+              if enabled and LEVELS_NAME_TO_LEVEL[logging_level] >= logger_logging_level
               else noop)
-            setattr(self, level, logging_method)
+            setattr(self, logging_level, logging_method)
 
     def child(self, metas):
-        # §TODO: handle level?
-        merged_bindings = merge_dicts(self._logger_metas, metas)
+        # §TODO: handle level? (nd other options)
+        merged_bindings = merge_dicts(self._config.binding, metas)
         return PinoLogger(
             bindings=merged_bindings,
-            level=self._level,
-            enabled=self._is_logging,
-            stream=self._stream
+            level=self._config.level,
+            enabled=self._config.enabled,
+            stream=self._config.stream,
+            parent=self
         )
