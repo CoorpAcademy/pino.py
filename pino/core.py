@@ -5,16 +5,18 @@ from datetime import datetime
 from collections import namedtuple
 from .utils import merge_dicts
 
-PinoConfig = namedtuple('PinoConfig', ['level', 'level_name', 'stream', 'binding', 'enabled', 'parent'])
+LoggingLevel = namedtuple('LoggingLevel', ['name', 'level'])
+PinoConfig = namedtuple('PinoConfig', ['level', 'stream', 'binding', 'enabled', 'parent'])
 
-LEVELS_NAME_TO_LEVEL = {
-    "debug": 10,
-    "info": 20,
-    "warn": 30,
-    "error": 40,
-    "fatal": 50
-}
-LEVEL_NAMES = LEVELS_NAME_TO_LEVEL.keys()
+LEVELS = [
+   LoggingLevel("debug", 10),
+   LoggingLevel("info", 20),
+   LoggingLevel("warn", 30),
+   LoggingLevel("error", 40),
+   LoggingLevel("fatal", 50)
+]
+LEVEL_NAMES = [level.name for level in LEVELS]
+LEVEL_BY_NAME = {level.name: level for level in LEVELS}
 
 
 def get_logger(stream, level, metas={}):
@@ -40,20 +42,20 @@ def noop(*args):
 
 class PinoLogger:
     def __init__(self, bindings=None, level="info", stream=sys.stdout, enabled=True, parent=None):
-        logger_logging_level = LEVELS_NAME_TO_LEVEL[level]
-        self._config = PinoConfig(level, logger_logging_level, stream, bindings, enabled, parent)
-        for logging_level in LEVEL_NAMES:
-            logging_method = (get_logger(stream, logging_level, bindings)
-              if enabled and LEVELS_NAME_TO_LEVEL[logging_level] >= logger_logging_level
+        logging_level = LEVEL_BY_NAME.get(level)  # ! TODO: support LoggingLevel or Code?
+        self._config = PinoConfig(logging_level, stream, bindings, enabled, parent)
+        for level in LEVEL_NAMES:
+            logging_method = (get_logger(stream, level, bindings)
+              if enabled and LEVEL_BY_NAME.get(level).level >= logging_level.level
               else noop)
-            setattr(self, logging_level, logging_method)
+            setattr(self, level, logging_method)
 
     def child(self, metas):
         # §TODO: handle level? (nd other options)
         merged_bindings = merge_dicts(self._config.binding, metas)
         return PinoLogger(
             bindings=merged_bindings,
-            level=self._config.level,
+            level=self._config.level.name,
             enabled=self._config.enabled,
             stream=self._config.stream,
             parent=self
