@@ -33,19 +33,20 @@ def get_level(level_name_or_code):
 host = socket.gethostname()
 
 
-def get_logger(self):
-    metas = self._config.bindings
-    level = self._config.level.name
+def get_logger(self, level):
+    metas = self._config.bindings or {}
     stream = self._config.stream
     message_key = self._config.messagekey
     should_millidiff = self._config.millidiff
 
     def log(*args, **kwargs):
         has_meta = isinstance(args[0], dict)
+
         if has_meta:
             message_metas = args[0]
-            complete_metas = (merge_dicts(metas, message_metas)
+            complete_metas = (merge_dicts(message_metas, metas)
                               if message_metas else metas)
+            print(complete_metas)
             args = args[1:] # shit args
         else:
             complete_metas = metas
@@ -76,7 +77,7 @@ def get_logger(self):
     return log
 
 class DummyLogger:
-    def fatal(self, *args, **kwargs):
+    def critical(self, *args, **kwargs):
         pass
     def error(self, *args, **kwargs):
         pass
@@ -103,7 +104,7 @@ class PinoLogger(DummyLogger):
     def _setup_logging(self, config):
         if config.enabled:
             for level in LEVELS:
-                logging_method = get_logger(self) if level.level >= config.level.level \
+                logging_method = get_logger(self, level.name) if level.level >= config.level.level \
                     else getattr(super(), level.name)
                 setattr(self, level.name, logging_method)
 
@@ -117,7 +118,7 @@ class PinoLogger(DummyLogger):
         self._setup_logging(self._config)
 
     def child(self, metas):
-        merged_bindings = merge_dicts(self._config.bindings, metas)
+        merged_bindings = merge_dicts(metas, self._config.bindings)
         child_logger = PinoLogger(
             **self._config._replace(parent=self, bindings=merged_bindings)._asdict()
         )
