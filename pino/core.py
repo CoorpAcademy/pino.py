@@ -12,9 +12,9 @@ DEBUG = LoggingLevel("debug", 10)
 INFO = LoggingLevel("info", 20)
 WARN = LoggingLevel("warn", 30)
 ERROR = LoggingLevel("error", 40)
-FATAL = LoggingLevel("fatal", 50)
+CRITICAL = LoggingLevel("critical", 50)
 
-LEVELS = [DEBUG, INFO, WARN, ERROR, FATAL]
+LEVELS = [DEBUG, INFO, WARN, ERROR, CRITICAL]
 LEVEL_NAMES = [level.name for level in LEVELS]
 LEVEL_BY_NAME = {level.name: level for level in LEVELS}
 LEVEL_BY_CODE = {level.level: level for level in LEVELS}
