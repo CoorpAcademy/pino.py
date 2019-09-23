@@ -33,12 +33,23 @@ def get_logger(self):
     stream = self._config.stream
     should_millidiff = self._config.millidiff
 
-    def log(*args):
+    def log(*args, **kwargs):
         has_meta = isinstance(args[0], dict)
-        message_metas = args[0] if has_meta else None
-        complete_metas = (merge_dicts(metas, message_metas)
-                          if message_metas else metas)
-        message = args[1] if has_meta else args[0]  # !TODO: handle formating!
+        if has_meta:
+            message_metas = args[0]
+            complete_metas = (merge_dicts(metas, message_metas)
+                              if message_metas else metas)
+            args = args[1:] # shit args
+        else:
+            complete_metas = metas
+
+        if len(args) > 1:
+            message = args[0] % args[1:]
+        elif len(kwargs):
+            message = args[0].format(**kwargs)
+        else:
+            message = args[0]
+
         now = int(1000* datetime.now().timestamp())
         json_log = {
             "level": level,
@@ -58,15 +69,15 @@ def get_logger(self):
     return log
 
 class DummyLogger:
-    def fatal(self, *args):
+    def fatal(self, *args, **kwargs):
         pass
-    def error(self, *args):
+    def error(self, *args, **kwargs):
         pass
-    def warn(self, *args):
+    def warn(self, *args, **kwargs):
         pass
-    def info(self, *args):
+    def info(self, *args, **kwargs):
         pass
-    def debug(self, *args):
+    def debug(self, *args, **kwargs):
         pass
 
 class PinoLogger(DummyLogger):

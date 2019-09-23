@@ -10,10 +10,10 @@ logger = pino(bindings={"apptype": "prototype", "stats": {"job_name": "my_job"}}
 
 logger.info("job started")
 logger.debug("something happening")
-logger.info({"err_code": 42, "stats": {"execution_time": 42}}, "job completed")
+logger.info({"err_code": 42, "stats": {"execution_time": 42}}, "job completed %s", "NOW")
 
 logger.level = "warn"
 logger.info("You wont see mee")
 logger.warn("Unless I warn you")
 logger.level = "info"
-logger.info("Or I restore info leve")
+logger.info("Or I restore {level} level", level="info")
