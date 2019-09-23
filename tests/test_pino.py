@@ -116,3 +116,14 @@ def test_level_by_value():
 
     assert len(stream.getvalue().strip().split("\n")) == 2
 
+
+def test_child_no_binding():
+    stream = StringIO()
+    logger = pino(stream=stream)
+    child_logger = logger.child(dict(akey="avalue"))
+    child_logger.info("Info")
+
+    lines = stream.getvalue().strip().split("\n")
+    assert len(lines) == 1
+    log = json.loads(lines[0])
+    assert sorted(log.keys()) == ["akey", "host", "level", "message", "millidiff", "time"]
