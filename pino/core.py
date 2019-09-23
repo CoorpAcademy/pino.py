@@ -6,7 +6,7 @@ from collections import namedtuple
 from .utils import merge_dicts
 
 LoggingLevel = namedtuple('LoggingLevel', ['name', 'level'])
-PinoConfig = namedtuple('PinoConfig', ['level', 'stream', 'binding', 'enabled', 'parent'])
+PinoConfig = namedtuple('PinoConfig', ['level', 'stream', 'bindings', 'enabled', 'parent'])
 
 LEVELS = [
    LoggingLevel("debug", 10),
@@ -19,7 +19,10 @@ LEVEL_NAMES = [level.name for level in LEVELS]
 LEVEL_BY_NAME = {level.name: level for level in LEVELS}
 
 
-def get_logger(stream, level, metas={}):
+def get_logger(self):
+    metas = self._config.bindings
+    level = self._config.level.name
+    stream = self._config.stream
     def log(*args):
         has_meta = isinstance(args[0], dict)
         message_metas = args[0] if has_meta else None
@@ -58,11 +61,11 @@ class PinoLogger(DummyLogger):
         self._config = PinoConfig(logging_level, stream, bindings, enabled, parent)
         for level in LEVEL_NAMES:
             if enabled and LEVEL_BY_NAME.get(level).level >= logging_level.level:
-                logging_method = get_logger(stream, level, bindings)
+                logging_method = get_logger(self)
                 setattr(self, level, logging_method)
 
     def child(self, metas):
-        merged_bindings = merge_dicts(self._config.binding, metas)
+        merged_bindings = merge_dicts(self._config.bindings, metas)
         return PinoLogger(
             bindings=merged_bindings,
             level=self._config.level.name,
