@@ -53,7 +53,6 @@ def test_create_pino_and_child():
         assert sorted(log.keys()) == ["and_some", "host", "level", "message", "millidiff", "the", "time"]
 
         if n == 0:
-            print(log)
             assert log["the"] == "default binding"
             assert log["and_some"] == {"nested": "value"}
         elif n == 1:

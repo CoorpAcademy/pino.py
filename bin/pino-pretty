@@ -23,3 +23,5 @@ for line in fileinput.input():
         )
     except json.decoder.JSONDecodeError:
         print(line.rstrip())
+    except KeyboardInterrupt:
+        break
