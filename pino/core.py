@@ -18,12 +18,13 @@ LEVELS = [DEBUG, INFO, WARN, ERROR, CRITICAL]
 LEVEL_NAMES = [level.name for level in LEVELS]
 LEVEL_BY_NAME = {level.name: level for level in LEVELS}
 LEVEL_BY_CODE = {level.level: level for level in LEVELS}
+
 def get_level(level_name_or_code):
     if isinstance(level_name_or_code, LoggingLevel):
         return level_name_or_code
-    return (LEVEL_BY_CODE.get(level_name_or_code)
-            if isinstance(level_name_or_code, int)
-            else LEVEL_BY_NAME.get(level_name_or_code))
+    if isinstance(level_name_or_code, int):
+        return LEVEL_BY_CODE.get(level_name_or_code)
+    return LEVEL_BY_NAME.get(level_name_or_code)
 
 
 def get_logger(self):
@@ -74,10 +75,23 @@ class PinoLogger(DummyLogger):
         logging_level = get_level(level)  # ! TODO: support LoggingLevel or Code?
         self._config = PinoConfig(logging_level, stream, bindings, enabled, millidiff, parent)
         self._last_timestamp = None
-        for level in LEVELS:
-            if enabled and level.level >= logging_level.level:
-                logging_method = get_logger(self)
+        self._setup_logging(self._config)
+
+    def _setup_logging(self, config):
+        if config.enabled:
+            for level in LEVELS:
+                logging_method = get_logger(self) if level.level >= config.level.level \
+                    else getattr(super(), level.name)
                 setattr(self, level.name, logging_method)
+
+    @property
+    def level(self):
+        return self._config.level.name
+
+    @level.setter
+    def level(self, new_level):
+        self._config = self._config._replace(level=get_level(new_level))
+        self._setup_logging(self._config)
 
     def child(self, metas):
         merged_bindings = merge_dicts(self._config.bindings, metas)
