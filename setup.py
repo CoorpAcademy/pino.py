@@ -15,6 +15,7 @@ setup(
     url="https://github.com/CoorpAcademy/pino.py",
     license="MIT",
     packages=["pino"],
+    scripts=['bin/pino-pretty'],
     install_requires=[],
     #setup_requires=["pytest-runner"],
     #tests_require=["tox", "pytest", "pyte"],
