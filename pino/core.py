@@ -1,12 +1,15 @@
 import json
 import sys
 import os
+import socket
 from datetime import datetime
 from collections import namedtuple
 from .utils import merge_dicts
 
 LoggingLevel = namedtuple('LoggingLevel', ['name', 'level'])
-PinoConfig = namedtuple('PinoConfig', ['level', 'stream', 'bindings', 'enabled', 'millidiff', 'parent'])
+PinoConfig = namedtuple('PinoConfig', [
+    'level', 'stream', 'enabled', 'bindings', 'messagekey', 'millidiff', 'parent'
+])
 
 DEBUG = LoggingLevel("debug", 10)
 INFO = LoggingLevel("info", 20)
@@ -27,10 +30,14 @@ def get_level(level_name_or_code):
     return LEVEL_BY_NAME.get(level_name_or_code)
 
 
+host = socket.gethostname()
+
+
 def get_logger(self):
     metas = self._config.bindings
     level = self._config.level.name
     stream = self._config.stream
+    message_key = self._config.messagekey
     should_millidiff = self._config.millidiff
 
     def log(*args, **kwargs):
@@ -54,8 +61,8 @@ def get_logger(self):
         json_log = {
             "level": level,
             "time": now,
-            # §todo: add host and other metas.
-            "message": message,
+            message_key: message,
+            "host": host,
             **complete_metas
         }
         if should_millidiff:
@@ -82,9 +89,14 @@ class DummyLogger:
 
 class PinoLogger(DummyLogger):
     __slots__ = ["_config", "_last_timestamp"]
-    def __init__(self, bindings=None, level="info", stream=sys.stdout, enabled=True, parent=None, millidiff=True):
-        logging_level = get_level(level)  # ! TODO: support LoggingLevel or Code?
-        self._config = PinoConfig(logging_level, stream, bindings, enabled, millidiff, parent)
+
+    def __init__(
+        self,
+        bindings=None, level="info", stream=sys.stdout,
+        enabled=True, parent=None, millidiff=True, messagekey="message"
+    ):
+        logging_level = get_level(level)
+        self._config = PinoConfig(logging_level, stream, enabled, bindings, messagekey, millidiff, parent)
         self._last_timestamp = None
         self._setup_logging(self._config)
 
@@ -107,12 +119,7 @@ class PinoLogger(DummyLogger):
     def child(self, metas):
         merged_bindings = merge_dicts(self._config.bindings, metas)
         child_logger = PinoLogger(
-            bindings=merged_bindings,
-            level=self._config.level.name,
-            enabled=self._config.enabled,
-            millidiff=self._config.millidiff,
-            stream=self._config.stream,
-            parent=self
+            **self._config._replace(parent=self, bindings=merged_bindings)._asdict()
         )
         child_logger._last_timestamp = self._last_timestamp
         return child_logger

@@ -6,7 +6,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pino import pino
 
-logger = pino(bindings={"apptype": "prototype", "stats": {"job_name": "my_job"}}, millidiff=False)
+logger = pino(
+    messagekey="msg",
+    bindings={"apptype": "prototype", "stats": {"job_name": "my_job"}},
+    millidiff=False
+)
 
 logger.info("job started")
 logger.debug("something happening")
