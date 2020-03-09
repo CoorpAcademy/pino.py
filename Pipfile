@@ -4,10 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pytest-cov = "*"
-codecov = "*"
-pytest = "*"
-style = "*"
 
 [dev-packages]
 twine = "*"
@@ -15,6 +11,9 @@ pytest = "*"
 tox = "*"
 tox-pyenv = "*"
 tox-travis = "*"
+pytest-cov = "*"
+codecov = "*"
+style = "*"
 
 [requires]
 python_version = "3.6"
