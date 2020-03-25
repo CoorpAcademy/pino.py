@@ -258,7 +258,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 version = "1.14.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "🌈 Terminal string styling"
 name = "style"
 optional = false
@@ -393,7 +393,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "c41f7c31e14b8ce6e7414cf0c22db60fb6661e2ca7f88fb98f04ea5c31341475"
+content-hash = "4b28f771395da352a35c3610f1992bd84d75ab7ba5b2dca5c4df40fe1c5b32f0"
 python-versions = "^3.6"
 
 [metadata.files]

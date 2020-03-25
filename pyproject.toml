@@ -5,6 +5,7 @@ description = "Python json logger inspired by pino.js"
 authors = ["Adrien Becchis <adrien.becchis@coorpacademy.com>"]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/CoorpAcademy/pino.py"
 keywords = ["log", "logger", "logging", "json"]
 classifiers=[
     "Development Status :: 4 - Beta",
@@ -25,6 +26,7 @@ packages = [{ include = "pino" }]
 
 [tool.poetry.dependencies]
 python = "^3.6"
+style = "^1.1.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
@@ -33,12 +35,9 @@ tox-pyenv = "*"
 tox-travis = "*"
 pytest-cov = "*"
 codecov = "*"
-style = "*"
 taskipy = "^1.2.1"
 
 [tool.taskipy.tasks]
 test = "tox"
 pytest = "python -m pytest --cov=pino"
-build = "python setup.py sdist bdist_wheel"
-publish = "twine upload dist/*"
 clean = "rm -r build dist pino.egg-info .tox .pytest_cache .coverage"
