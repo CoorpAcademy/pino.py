@@ -5,14 +5,15 @@ python:
   - "3.6"
 
 install:
-  - pip install pipenv
-  - pipenv install --dev
+   - pip install --upgrade pip
+   - pip install poetry
+   - poetry install -v
 
 script:
-  - pipenv run test
+  - tox
   # just check example dont crash waiting for real tests
-  - pipenv run python examples/simple.py
-  - pipenv run python examples/complex.py
+  - python examples/simple.py
+  - python examples/complex.py
 
 after_success:
   - pipenv run codecov
