@@ -24,6 +24,9 @@ classifiers=[
 ]
 packages = [{ include = "pino" }]
 
+[tool.poetry.scripts]
+pino-pretty = "pino.pretty_cli:main"
+
 [tool.poetry.dependencies]
 python = "^3.6"
 style = "^1.1.6"
