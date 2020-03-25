@@ -2,7 +2,7 @@
 name = "pino"
 version = "0.5.0"
 description = "Python json logger inspired by pino.js"
-authors = ["Adrien Becchis @Coorpacademy <adriean.khisbe@live.fr>"]
+authors = ["Adrien Becchis <adrien.becchis@coorpacademy.com>"]
 license = "MIT"
 readme = "README.md"
 keywords = ["log", "logger", "logging", "json"]
@@ -21,7 +21,7 @@ classifiers=[
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: System :: Logging"
 ]
-packages = ["pino"]
+packages = [{ include = "pino" }]
 
 [tool.poetry.dependencies]
 python = "^3.6"
