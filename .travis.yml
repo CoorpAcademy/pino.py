@@ -10,7 +10,7 @@ install:
    - poetry install -v
 
 script:
-  - tox
+  - poetry run task test
   # just check example dont crash waiting for real tests
   - python examples/simple.py
   - python examples/complex.py

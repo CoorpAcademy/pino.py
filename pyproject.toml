@@ -34,3 +34,11 @@ tox-travis = "*"
 pytest-cov = "*"
 codecov = "*"
 style = "*"
+taskipy = "^1.2.1"
+
+[tool.taskipy.tasks]
+test = "tox"
+pytest = "python -m pytest --cov=pino"
+build = "python setup.py sdist bdist_wheel"
+publish = "twine upload dist/*"
+clean = "rm -r build dist pino.egg-info .tox .pytest_cache .coverage"
