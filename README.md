@@ -17,7 +17,7 @@ Use it at you own risk, but feel free to reach with an issue.
 
 ## Development :hammer_and_wrench:
 
-This library use [***Pipenv***](https://pipenv.readthedocs.io) for dependencies management.
+This library use [***Poetry***](https://python-poetry.org/) for management of the project, it's dependencies, build and else.
 
-You can run test on all supported python version with `pipenv run test` (which will run `tox`),
-or you can run on your current python version with `pipenv run pytest`.
+You can run test on all supported python version with `poetry run task test` (which will run `tox`),
+or you can run on your current python version with `poetry run task pytest`.
