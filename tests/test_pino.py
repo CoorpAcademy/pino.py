@@ -62,6 +62,21 @@ def test_create_pino_and_child():
             assert log["the"] == "child"
             assert log["and_some"] == {"nested": "value", "other": True}
 
+def test_create_pino_and_child_via_kwargs():
+    stream = StringIO()
+    logger = pino(
+        stream=stream,
+        bindings=dict(the="default binding", and_some=dict(nested="value"))
+    )
+    child_logger = logger.child(the="child", and_some=dict(other=True))
+    child_logger.info("I'm here with kwargs there")
+
+    logged_output = stream.getvalue().strip()
+    log = json.loads(logged_output)
+    assert sorted(log.keys()) == ["and_some", "host", "level", "message", "millidiff", "the", "time"]
+    assert log["the"] == "child"
+    assert log["and_some"] == {"nested": "value", "other": True}
+
 def test_update_level_on_the_fly():
     stream = StringIO()
     logger = pino(stream=stream, level="critical")

@@ -115,8 +115,8 @@ class PinoLogger(DummyLogger):
         self._config = self._config._replace(level=get_level(new_level))
         self._setup_logging(self._config)
 
-    def child(self, metas):
-        merged_bindings = merge_dicts(metas, self._config.bindings)
+    def child(self, metas=None, **kwargs_metas):
+        merged_bindings = merge_dicts(metas or kwargs_metas, self._config.bindings)
         child_logger = PinoLogger(
             **self._config._replace(parent=self, bindings=merged_bindings)._asdict()
         )
