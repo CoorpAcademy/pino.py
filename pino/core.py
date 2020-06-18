@@ -45,7 +45,7 @@ def get_logger(self, level):
         if has_meta:
             message_metas = args[0]
             complete_metas = merge_dicts(message_metas, metas)
-            args = args[1:] # shit args
+            args = args[1:] # shift args
         else:
             complete_metas = metas
 
