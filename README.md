@@ -15,7 +15,7 @@ A CHANGELOG will be introduced once it's stable enough and publicized.
 Use it at you own risk, but feel free to reach with an issue.
 
 
-### Basic Example
+## Basic Example
 
 ```python
 from pino import pino
@@ -42,6 +42,26 @@ Which would output:
 {"level": "info", "time": 1587740056952, "message": "Program completed", "host": "SomeHost", "apptype": "prototype", "context": "main", "millidiff": 0}
 ```
 
+## API
+### pino() constructor arguments
+
+- `bindings`: meta attached to the messages by default
+- `level`: minimal level to output logs, _default to `info`_
+- `enabled`: is logger enabled, _default to true_
+- `millidiff`: whether a millidiff is added to message, `ms` since last message, _enabled by default_.
+- `stream` : stream to write logs to, default to `sys.stdout`
+- `dump_function`: function to be used to serialise object to JSON, _default `json.dumps`_
+- `messagekey`: key for message entry,  _default `message`_
+
+### pino logger instance
+- log methods: `critical`, `error`, `warn`, `info`, `debug`: (extra_bindings?), message, template value
+- `.level`: access or update current log level
+
+- `child(metas)`: create a child logger instance with new metas/bindings attached to it. (metas can be provided either as dict or kwargs)
+
+### Complex examples
+
+You can see more detailed examples in the [**examples** folder](./examples), notably [complex.py](./examples/complex.py)
 
 ## Development :hammer_and_wrench:
 
