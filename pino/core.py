@@ -68,7 +68,7 @@ def get_logger(self, level):
             delta = (now - self._last_timestamp) if self._last_timestamp else 0
             json_log["millidiff"] = delta
             self._last_timestamp = now
-        stream.write(json.dumps(json_log))
+        stream.write(self._dumps(json_log))
         stream.write(os.linesep)
         stream.flush()
     log.__name__ = level
@@ -87,17 +87,19 @@ class DummyLogger:
         pass
 
 class PinoLogger(DummyLogger):
-    __slots__ = ["_config", "_last_timestamp"]
+    __slots__ = ["_config", "_last_timestamp", "_dumps"]
 
     def __init__(
         self,
         bindings=None, level="info", stream=sys.stdout,
-        enabled=True, parent=None, millidiff=True, messagekey="message"
+        enabled=True, parent=None, millidiff=True, messagekey="message",
+        dump_function=json.dumps
     ):
         logging_level = get_level(level)
         self._config = PinoConfig(logging_level, stream, enabled, bindings, messagekey, millidiff, parent)
         self._last_timestamp = None
         self._setup_logging(self._config)
+        self._dumps = dump_function
 
     def _setup_logging(self, config):
         if config.enabled:
@@ -118,7 +120,8 @@ class PinoLogger(DummyLogger):
     def child(self, metas=None, **kwargs_metas):
         merged_bindings = merge_dicts(metas or kwargs_metas, self._config.bindings)
         child_logger = PinoLogger(
-            **self._config._replace(parent=self, bindings=merged_bindings)._asdict()
+            **self._config._replace(parent=self, bindings=merged_bindings)._asdict(),
+            dump_function=self._dumps
         )
         child_logger._last_timestamp = self._last_timestamp
         return child_logger

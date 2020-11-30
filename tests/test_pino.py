@@ -1,5 +1,6 @@
 from io import StringIO
 import json
+from datetime import datetime
 from pino import pino
 
 def test_create_simple_pino():
@@ -141,3 +142,38 @@ def test_child_no_binding():
     assert len(lines) == 1
     log = json.loads(lines[0])
     assert sorted(log.keys()) == ["akey", "host", "level", "message", "millidiff", "time"]
+
+def test_custom_dumps():
+    stream = StringIO()
+    logger = pino(stream=stream, dump_function=lambda _: "DUMP")
+    logger.info("hello")
+    logger.info("hello again")
+
+    lines = stream.getvalue().strip().split("\n")
+    assert lines == ["DUMP", "DUMP"]
+
+
+def test_custom_dumps_with_date():
+    stream = StringIO()
+    logger = pino(stream=stream, dump_function=lambda obj: json.dumps(obj, default=str))
+
+    logger.info({"some_date": datetime(2012, 2, 20)}, "Info")
+
+    lines = stream.getvalue().strip().split("\n")
+    assert len(lines) == 1
+    log = json.loads(lines[0])
+    assert sorted(log.keys()) == ["host", "level", "message", "millidiff", "some_date", "time"]
+    assert log["some_date"] == "2012-02-20 00:00:00"
+
+
+def test_custom_dumps_with_child():
+    stream = StringIO()
+    logger = pino(stream=stream, dump_function=lambda _: "DUMP_CHILD")
+
+    child_logger = logger.child(dict(iam="favoritelittlechild"))
+
+    child_logger.info("hello child")
+    child_logger.info("hello child again")
+
+    lines = stream.getvalue().strip().split("\n")
+    assert lines == ["DUMP_CHILD", "DUMP_CHILD"]
