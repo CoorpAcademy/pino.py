@@ -5,17 +5,19 @@ import socket
 from datetime import datetime
 from collections import namedtuple
 from .utils import merge_dicts
+from os import getpid
+
 
 LoggingLevel = namedtuple('LoggingLevel', ['name', 'level'])
 PinoConfig = namedtuple('PinoConfig', [
     'level', 'stream', 'enabled', 'bindings', 'messagekey', 'millidiff', 'parent'
 ])
 
-DEBUG = LoggingLevel("debug", 10)
-INFO = LoggingLevel("info", 20)
-WARN = LoggingLevel("warn", 30)
-ERROR = LoggingLevel("error", 40)
-CRITICAL = LoggingLevel("critical", 50)
+DEBUG = LoggingLevel("debug", 20)
+INFO = LoggingLevel("info", 30)
+WARN = LoggingLevel("warn", 40)
+ERROR = LoggingLevel("error", 50)
+CRITICAL = LoggingLevel("critical", 60)
 
 LEVELS = [DEBUG, INFO, WARN, ERROR, CRITICAL]
 LEVEL_NAMES = [level.name for level in LEVELS]
@@ -30,7 +32,7 @@ def get_level(level_name_or_code):
     return LEVEL_BY_NAME.get(level_name_or_code)
 
 
-host = socket.gethostname()
+hostname = socket.gethostname()
 
 
 def get_logger(self, level):
@@ -58,10 +60,11 @@ def get_logger(self, level):
 
         now = int(1000* datetime.now().timestamp())
         json_log = {
-            "level": level,
+            "level": level.level,
             "time": now,
+            'pid': getpid(),
             message_key: message,
-            "host": host,
+            "hostname": hostname,
             **complete_metas
         }
         if should_millidiff:
@@ -71,7 +74,7 @@ def get_logger(self, level):
         stream.write(self._dumps(json_log))
         stream.write(os.linesep)
         stream.flush()
-    log.__name__ = level
+    log.__name__ = level.name
     return log
 
 class DummyLogger:
@@ -92,7 +95,7 @@ class PinoLogger(DummyLogger):
     def __init__(
         self,
         bindings=None, level="info", stream=sys.stdout,
-        enabled=True, parent=None, millidiff=True, messagekey="message",
+        enabled=True, parent=None, millidiff=True, messagekey="msg",
         dump_function=json.dumps
     ):
         logging_level = get_level(level)
@@ -104,7 +107,7 @@ class PinoLogger(DummyLogger):
     def _setup_logging(self, config):
         if config.enabled:
             for level in LEVELS:
-                logging_method = get_logger(self, level.name) if level.level >= config.level.level \
+                logging_method = get_logger(self, level) if level.level >= config.level.level \
                     else getattr(super(), level.name)
                 setattr(self, level.name, logging_method)
 
